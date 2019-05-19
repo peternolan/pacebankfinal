@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-
 //mport logo from './logo.svg';
 import './App.css';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import Login from './components/portal/Login';
+import Store from './components/storebank/StoreBank';
+
 
 
 class App extends Component {
@@ -16,7 +17,8 @@ class App extends Component {
                 <header className="App-header">
                     PACE
                 </header>
-                <Login/>
+                <Route path = '/' exact render={() => <Login/>}/>
+                <Route path = '/store' render={() => <Store/>}/>
             </div>
         </BrowserRouter>
     );

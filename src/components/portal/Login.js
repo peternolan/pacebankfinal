@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom';
 //import logo from './logo.svg';
+import './Login.css'
 
 class Login extends Component {
 
@@ -30,7 +31,7 @@ class Login extends Component {
         const body = await response.text();
 
         if (body === 'logged in') {
-            let path = `newPath`;
+            let path = `/store`;
             this.props.history.push(path);
         }
 
