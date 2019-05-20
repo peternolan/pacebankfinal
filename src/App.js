@@ -4,6 +4,7 @@ import './App.css';
 import { BrowserRouter, Route } from 'react-router-dom';
 import Login from './components/portal/Login';
 import Store from './components/storebank/StoreBank';
+import CreateAcc from './components/portal/CreateAcc';
 
 
 
@@ -19,6 +20,7 @@ class App extends Component {
                 </header>
                 <Route path = '/' exact render={() => <Login/>}/>
                 <Route path = '/store' render={() => <Store/>}/>
+                <Route path = '/create' render={() => <CreateAcc/>}/>
             </div>
         </BrowserRouter>
     );

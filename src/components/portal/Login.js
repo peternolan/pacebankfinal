@@ -5,20 +5,29 @@ import './Login.css'
 
 class Login extends Component {
 
-    constuctor() {
-        this.routeChange = this.routeChange.bind(this);
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            userId: '',
+        }
     }
+
+    newUser () {
+        let path = `/create`;
+        this.props.history.push(path);
+    };
 
     handleLogin = async e => {
 
         e.preventDefault();
 
-
-
         let data = {
             username: this.refs.username.value,
             password: this.refs.psw.value
         };
+
+        let id;
 
         const response = await fetch('/api/login', {
             method: 'POST',
@@ -26,16 +35,16 @@ class Login extends Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
-        });
+        }).then(response => response.json())
+            .then(data => this.setState({userID: data}));
 
-        const body = await response.text();
+        console.log(this.state.userID[0].custid);
 
-        if (body === 'logged in') {
+        if (this.state.userID) {
             let path = `/store`;
-            this.props.history.push(path);
+            this.props.history.push({pathname: path, state: {userID: this.state.userID[0].custid}});
         }
 
-        console.log(body)
 
     };
 
@@ -56,6 +65,9 @@ class Login extends Component {
 
                             <button type="submit" className="loginButton" id="loginUser"
                                         onClick={this.handleLogin.bind(this)}>Login
+                            </button>
+                            <button className="loginButton" id="loginUser"
+                                    onClick={this.newUser.bind(this)}>CreateNewUser
                             </button>
                         </nav>
                     </form>

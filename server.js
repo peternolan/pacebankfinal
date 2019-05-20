@@ -57,31 +57,138 @@ app.use(function (req, res, next) {
     next();
 });
 
-// common technique for a 'unique' alphanumeric id
+//Creates UniqueID for
 function new_id() {
-    return Date.now().toString(36)
+    return new Date().getUTCMilliseconds();
 }
 
-app.get('/api/hello', (req, res) => {
-    console.log("HELLO");
-    res.send({ express: 'Hello From Express' });
+
+app.post('/api/getPortfolio', (req, res) => {
+    /**
+     * Get the items currently held by the user.
+     */
+    /*
+    Will be passing in the id of the current user.
+     */
+    console.log(req.body.id);
+    var queryAddCond = 'SELECT * FROM boughtprod ' +
+        'WHERE portid = ' + SqlString.escape(req.body.id);
+
+    pool.query(queryAddCond, (err, results) => {
+        if (err) {
+            throw err
+        }
+
+        send(res, JSON.stringify(results.rows));
+
+    });
+
+
 });
+
+
+app.post('/api/getProducts', (req, res) => {
+    /**
+     * First Step, get the ids of products that the user currently owns.
+     * Second Step, use these ids to filter out the group total
+     * third Step, produce the current amount of products.
+     */
+
+    var queryGet = '';
+
+    console.log(req.body.portfolio);
+
+
+
+    if (req.body.portfolio.length >= 1) {
+
+        queryGet = 'SELECT * FROM boughtprod WHERE portid NOT IN ( ' + SqlString.escape(req.body.portfolio) +')';
+    }
+    else {
+        queryGet = 'SELECT * FROM product'
+    }
+
+    pool.query(queryGet, (err, results) => {
+        if (err) {
+            throw err
+
+        }
+
+        send(res, JSON.stringify(results.rows));
+
+    });
+
+
+
+
+})
+
+
+
 
 app.post('/api/addUser', (req, res) => {
 
     var rows = req.body;
 
-    if (debug) console.log(rows);
-
     let id = new_id();
+    let newPort = new_id();
 
     let hash = bcrypt.hashSync(rows.password, saltRounds).toString();
+
+    console.log(req.body);
+
+    var queryAddCond = 'INSERT INTO customer '
+        + '(custid, username, password, firstname, lastname, employed, salary, portfolioid) '
+        + 'SELECT ' + SqlString.escape(id) + ', '
+        +  SqlString.escape(req.body.username) + ', '
+        +  SqlString.escape(hash) + ', '
+        +  SqlString.escape(req.body.firstName) + ', '
+        +  SqlString.escape(req.body.lastName) + ', '
+        +  SqlString.escape(req.body.employed) + ', '
+        +  SqlString.escape(req.body.salary) + ', '
+        +  SqlString.escape(newPort)
+        + ' WHERE NOT EXISTS ( SELECT custid FROM ' +
+        'customer WHERE custid = ' + SqlString.escape(id) + ') ' +
+        'RETURNING custid';
+
+
+    pool.query(queryAddCond, (err, results) => {
+        if (err) {
+            throw err
+        }
+
+
+        if (JSON.stringify(results.rows).length > 0) {
+            var addPort = 'INSERT INTO portfolio '
+                + '(id) '
+                + 'SELECT ' + SqlString.escape(id);
+
+            pool.query(addPort, (err, results) => {
+                if (err) {
+                    throw err
+                }
+
+                res.end('account created');
+
+            });
+
+        } else {
+            res.end('username taken');
+        }
+
 });
 
+
+});
+
+
+
+
+
 app.post('/api/login', (req, res) => {
-    console.log(req.body);
+
     var row = req.body;
-    console.log(row);
+
     pool.query(`SELECT username FROM customer WHERE username = '` + req.body.username + `'`, (err, results) => {
         if (err) {
             throw err
@@ -91,12 +198,21 @@ app.post('/api/login', (req, res) => {
                 if (err) {
                     throw err
                 }
-                console.log(results.rows);
 
-                //if ( bcrypt.compareSync(row.password, results.rows[0].password) /*results.rows[0].password === req.body.password*/) {
+                if ( bcrypt.compareSync(row.password, results.rows[0].password) /*results.rows[0].password === req.body.password*/) {
                 //var User = cookie.get('User', { signed: true });
-                if (row.password === results.rows[0].password) {
-                    res.end('logged in');
+                //if (row.password === results.rows[0].password) {
+
+                    pool.query(`SELECT custid FROM customer WHERE username = '` + req.body.username + `'`, (err, results) => {
+                        if (err) {
+                            throw err
+                        }
+
+                        send(res, JSON.stringify(results.rows));
+
+
+                    });
+
                 } else {
                     res.end('incorrect password');
                 }
