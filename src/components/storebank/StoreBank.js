@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {withRouter} from "react-router";
+import Product from './Product';
 //import { withRouter } from 'react-router-dom';
+import './StoreBank.css'
 
 class StoreBank extends Component {
 
@@ -13,17 +15,24 @@ class StoreBank extends Component {
         super(props);
 
         this.state = {
-            portfolio: []
+            portfolio: [],
+            products: [],
         }
 
     }
 
+    componentWillMount() {
+        this.getPortfolio();
+
+    }
+
+
     async getPortfolio () {
 
-        console.log(this.props.location.state.userID);
+        console.log(this.props.match.params.userID);
 
         let data = {
-            id: this.props.location.state.userID,
+            id: this.props.match.params.userID,
         };
 
         const response = await fetch('/api/getPortfolio', {
@@ -35,9 +44,18 @@ class StoreBank extends Component {
         });
         const body = await response.text();
 
-        console.log(body);
+        let arr = JSON.parse(body);
 
-        this.setState({portfolio: body})
+        //[{"portid":851,"prodid":1,"investment":"$1,000.00","approve":true}]
+
+        console.log(body.length);
+        console.log(JSON.parse(body));
+
+        //for ()
+
+        this.setState({portfolio: arr}, () => {
+            this.getProducts();
+        })
 
 
     }
@@ -60,8 +78,22 @@ class StoreBank extends Component {
         });
 
         const body = await response.text();
+        let result = JSON.parse(body);
+        console.log(result);
+        console.log(result.length);
 
-        console.log(body);
+        let arr = [];
+
+        for (var i = 0; i < result.length; i++) {
+
+            var obj = {id: result[i].prodid, name: result[i].name, minInvest: result[i].mininvest};
+            console.log(obj);
+            arr.push(obj);
+
+        }
+
+        this.setState({products: arr});
+
 
 
     }
@@ -70,12 +102,22 @@ class StoreBank extends Component {
 
     render() {
 
-        this.getPortfolio();
-        this.getProducts();
 
         return (
-            <div className="Login">
-                HELLO
+
+            <div className="StoreBank">
+                <div id = "Portfolio">
+
+                    Hello
+
+                </div>
+
+                <hr/>
+
+                <div className={'ProductList'} id = "ProductList">
+                    <h1>Products</h1>
+                    {this.state.products.map(product => <Product key={product.name} userID = {parseInt(this.props.match.params.userID)} product = {product}/>)}
+                </div>
             </div>
 
         )

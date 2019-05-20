@@ -70,14 +70,17 @@ app.post('/api/getPortfolio', (req, res) => {
     /*
     Will be passing in the id of the current user.
      */
+
     console.log(req.body.id);
-    var queryAddCond = 'SELECT * FROM boughtprod ' +
+    var queryAddCond = 'SELECT prodid FROM boughtprod ' +
         'WHERE portid = ' + SqlString.escape(req.body.id);
 
     pool.query(queryAddCond, (err, results) => {
         if (err) {
             throw err
         }
+
+        console.log(results.rows);
 
         send(res, JSON.stringify(results.rows));
 
@@ -95,14 +98,24 @@ app.post('/api/getProducts', (req, res) => {
      */
 
     var queryGet = '';
+    console.log(req.body.portfolio.length);
+    //console.log(req.body.portfolio.length);
 
-    console.log(req.body.portfolio);
+    if (req.body.portfolio.length > 0) {
 
+        var str = '';
 
+        str = str + req.body.portfolio[0].prodid;
 
-    if (req.body.portfolio.length >= 1) {
+        for (var i = 1; i < req.body.portfolio.length ; i++) {
 
-        queryGet = 'SELECT * FROM boughtprod WHERE portid NOT IN ( ' + SqlString.escape(req.body.portfolio) +')';
+            str = str + ", " + req.body.portfolio[i];
+
+        }
+
+        console.log(str);
+
+        queryGet = 'SELECT * FROM product WHERE prodid NOT IN ( ' + SqlString.escape(str) +' )';
     }
     else {
         queryGet = 'SELECT * FROM product'
@@ -121,9 +134,41 @@ app.post('/api/getProducts', (req, res) => {
 
 
 
-})
+});
 
 
+
+app.post('/api/buyProduct', (req, res) => {
+
+    console.log('Buy Product');
+
+    if (req.body.currentInvest >= req.body.minInvest) {
+
+        var queryAddCond = 'INSERT INTO boughtprod '
+            + '(approve, portid, prodid, investment) ' +
+            'SELECT true, '
+            + SqlString.escape(req.body.userID) + ', '
+            + SqlString.escape(req.body.id) + ', '
+            + SqlString.escape(req.body.currentInvest)
+            + ' WHERE NOT EXISTS ( SELECT portid, prodid FROM ' +
+            'boughtprod WHERE portid = '
+            + SqlString.escape(req.body.userID) + '' +
+            'AND prodid = ' + SqlString.escape(req.body.id) + ' )';
+
+    }
+    else {
+        res.end('Investment too Small.');
+    }
+
+    pool.query(queryAddCond, (err, results) => {
+        if (err) {
+            throw err
+        }
+        res.end('product added');
+    });
+
+
+});
 
 
 app.post('/api/addUser', (req, res) => {

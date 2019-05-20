@@ -27,7 +27,6 @@ class Login extends Component {
             password: this.refs.psw.value
         };
 
-        let id;
 
         const response = await fetch('/api/login', {
             method: 'POST',
@@ -41,10 +40,9 @@ class Login extends Component {
         console.log(this.state.userID[0].custid);
 
         if (this.state.userID) {
-            let path = `/store`;
+            let path = `/store/${this.state.userID[0].custid}`;
             this.props.history.push({pathname: path, state: {userID: this.state.userID[0].custid}});
         }
-
 
     };
 

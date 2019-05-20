@@ -19,7 +19,7 @@ class App extends Component {
                     PACE
                 </header>
                 <Route path = '/' exact render={() => <Login/>}/>
-                <Route path = '/store' render={() => <Store/>}/>
+                <Route path = '/store/:userID' render={() => <Store/>}/>
                 <Route path = '/create' render={() => <CreateAcc/>}/>
             </div>
         </BrowserRouter>
