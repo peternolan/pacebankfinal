@@ -19,7 +19,8 @@ class CreateAcc extends Component {
             employed: this.refs.empStat.value,
             firstName: this.refs.fn.value,
             lastName: this.refs.ln.value,
-            salary: this.refs.salary.value
+            salary: this.refs.salary.value,
+            email: this.refs.email.value,
         };
 
         console.log(data);
@@ -63,6 +64,9 @@ class CreateAcc extends Component {
 
                             <label ><b>Last Name</b></label>
                             <input type="text" placeholder="Enter Last Name" ref="ln" required/>
+
+                            <label ><b>Email</b></label>
+                            <input type="text" placeholder="Enter Email" ref="email" required/>
 
                             <label ><b>Employment Status</b></label>
                             <input type="checkbox" ref="empStat"/>

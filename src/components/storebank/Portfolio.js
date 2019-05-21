@@ -31,7 +31,11 @@ class Portfolio extends Component {
     async getInvestment () {
         let data = {
             id: this.props.userID,
+            prodID: this.props.prodID
         };
+
+        console.log(this.props.userID);
+        console.log(this.props.prodID);
 
         const response = await fetch('/api/getInvestment', {
             method: 'POST',

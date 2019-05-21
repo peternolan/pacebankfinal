@@ -128,11 +128,13 @@ app.post('/api/getBoughtProducts', (req, res) => {
 
     });
 
-})
+});
 
 app.post('/api/getInvestment', (req, res) => {
 
-    let queryGet = 'SELECT investment FROM boughtprod WHERE portid = ' + SqlString.escape(req.body.id);
+    let queryGet = 'SELECT investment FROM boughtprod' +
+        ' WHERE portid = ' + SqlString.escape(req.body.id) +
+        ' AND prodid = ' + SqlString.escape(req.body.prodID);
 
     pool.query(queryGet, (err, results) => {
         if (err) {
@@ -143,11 +145,14 @@ app.post('/api/getInvestment', (req, res) => {
 
     });
 
-})
+});
 
 app.post('/api/buyProduct', (req, res) => {
 
     if (req.body.currentInvest >= req.body.minInvest) {
+
+        console.log(req.body.currentInvest);
+        console.log(req.body.minInvest);
 
         var queryAddCond = 'INSERT INTO boughtprod '
             + '(approve, portid, prodid, investment) ' +
@@ -160,17 +165,20 @@ app.post('/api/buyProduct', (req, res) => {
             + SqlString.escape(req.body.userID) + '' +
             'AND prodid = ' + SqlString.escape(req.body.id) + ' )';
 
+
+        pool.query(queryAddCond, (err) => {
+            if (err) {
+                throw err
+            }
+            res.end('product added');
+        });
+
     }
     else {
         res.end('Investment too Small.');
     }
 
-    pool.query(queryAddCond, (err, results) => {
-        if (err) {
-            throw err
-        }
-        res.end('product added');
-    });
+
 
 
 });
@@ -185,10 +193,10 @@ app.post('/api/addUser', (req, res) => {
 
     let hash = bcrypt.hashSync(rows.password, saltRounds).toString();
 
-    console.log(req.body);
+    console.log(req.body.email);
 
     var queryAddCond = 'INSERT INTO customer '
-        + '(custid, username, password, firstname, lastname, employed, salary, portfolioid) '
+        + '(custid, username, password, firstname, lastname, employed, salary, portfolioid, email) '
         + 'SELECT ' + SqlString.escape(id) + ', '
         +  SqlString.escape(req.body.username) + ', '
         +  SqlString.escape(hash) + ', '
@@ -196,13 +204,15 @@ app.post('/api/addUser', (req, res) => {
         +  SqlString.escape(req.body.lastName) + ', '
         +  SqlString.escape(req.body.employed) + ', '
         +  SqlString.escape(req.body.salary) + ', '
-        +  SqlString.escape(newPort)
+        +  SqlString.escape(newPort) + ', '
+        +  ' $1 '
         + ' WHERE NOT EXISTS ( SELECT custid FROM ' +
         'customer WHERE custid = ' + SqlString.escape(id) + ') ' +
         'RETURNING custid';
 
+    console.log(queryAddCond);
 
-    pool.query(queryAddCond, (err, results) => {
+    pool.query(queryAddCond, [req.body.email], (err, results) => {
         if (err) {
             throw err
         }
@@ -213,7 +223,7 @@ app.post('/api/addUser', (req, res) => {
                 + '(id) '
                 + 'SELECT ' + SqlString.escape(id);
 
-            pool.query(addPort, (err, results) => {
+            pool.query(addPort, (err) => {
                 if (err) {
                     throw err
                 }

@@ -26,11 +26,9 @@ class Product extends Component {
         let data = {
             id: this.props.product.id,
             userID: this.props.userID,
-            minInvest: this.props.product.minInvest,
-            currentInvest: this.refs.invest.value,
+            minInvest: parseFloat(this.props.product.minInvest),
+            currentInvest: parseFloat(this.refs.invest.value),
         };
-
-        console.log(data);
 
         const response = await fetch('/api/buyProduct', {
             method: 'POST',
@@ -41,6 +39,8 @@ class Product extends Component {
         });
 
         const body = await response.text();
+
+        window.location.reload();
 
         console.log(body)
 

@@ -11,7 +11,7 @@ class StoreBank extends Component {
 
     static propTypes = {
         userID: PropTypes.number,
-        loggedIn: false
+        loggedIn: PropTypes.bool
     };
 
     constructor (props) {
@@ -20,6 +20,7 @@ class StoreBank extends Component {
         this.state = {
             portfolio: [],
             products: [],
+            loggedIn: (this.props.location.state.loggedIn) ? this.props.location.state.loggedIn : false
         }
 
     }
@@ -104,7 +105,7 @@ class StoreBank extends Component {
         return (
 
             <div className="StoreBank">
-                {(!this.props.loggedIn) ?
+                {(!this.state.loggedIn) ?
                     (<div> YOU MUST BE LOGGED IN TO USE OUR APPLICATION </div>) :
                     (<div>
                         <div className={'PortfolioList'} id = "Portfolio">
