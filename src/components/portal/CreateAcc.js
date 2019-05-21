@@ -3,16 +3,27 @@ import { withRouter } from 'react-router-dom';
 //import logo from './logo.svg';
 import './CreateAcc.css'
 
+
+/**
+ * Class of Create Account Page.
+ */
 class CreateAcc extends Component {
 
     constuctor() {
         this.routeChange = this.routeChange.bind(this);
     }
 
+    /*
+    handleNewUser:
+    Creates a new user from the provided information. Data comes from the create user form.
+
+     */
+
     handleNewUser = async e => {
 
         e.preventDefault();
 
+        //Collected Data
         let data = {
             username: this.refs.username.value,
             password: this.refs.psw.value,
@@ -23,8 +34,7 @@ class CreateAcc extends Component {
             email: this.refs.email.value,
         };
 
-        console.log(data);
-
+        //Execute Query
         const response = await fetch('/api/addUser', {
             method: 'POST',
             headers: {
@@ -33,17 +43,21 @@ class CreateAcc extends Component {
             body: JSON.stringify(data),
         });
 
+        //Receive Results
         const body = await response.text();
 
+        //If the returned message says that an account was created, we return to the login page.
         if (body === 'account created') {
             let path = `/`;
             this.props.history.push(path);
         }
 
-        console.log(body)
-
     };
 
+
+    /**
+     * Handles cancel, brings the user back to the Login page.
+     */
     handleCancel() {
         let path = `/`;
         this.props.history.push(path);

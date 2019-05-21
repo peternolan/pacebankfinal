@@ -6,7 +6,9 @@ import Portfolio from "./Portfolio";
 //import { withRouter } from 'react-router-dom';
 import './StoreBank.css'
 
-
+/**
+ * Class of the main Store Page.
+ */
 class StoreBank extends Component {
 
     static propTypes = {
@@ -14,6 +16,10 @@ class StoreBank extends Component {
         loggedIn: PropTypes.bool
     };
 
+    /**
+     * Constructor
+     * @param props
+     */
     constructor (props) {
         super(props);
 
@@ -30,7 +36,10 @@ class StoreBank extends Component {
 
     }
 
-
+    /**
+     * Get all products from the portfolio so that a Portfolio component can be made for each.
+     * @returns {Promise<void>}
+     */
     async getPortfolio () {
 
         console.log(this.props.match.params.userID);
@@ -65,6 +74,10 @@ class StoreBank extends Component {
     }
 
 
+    /**
+     * Get all non paid for products so that a Product component can be made for each.
+     * @returns {Promise<void>}
+     */
     async getProducts () {
 
         let data = {

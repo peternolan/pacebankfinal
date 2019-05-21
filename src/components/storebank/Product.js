@@ -4,6 +4,10 @@ import PropTypes from "prop-types";
 //import logo from './logo.svg';
 import './Product.css'
 
+
+/**
+ * Class of Product containers.
+ */
 class Product extends Component {
 
     static propTypes = {
@@ -13,16 +17,26 @@ class Product extends Component {
 
 
 
+
     componentWillMount() {
         console.log(this.props.product);
     };
 
+    /**
+     * Buy a product from the product list.
+     * @param e
+     * @returns {Promise<void>}
+     */
     buyProduct = async e =>  {
 
         e.preventDefault();
 
         console.log('Buy Product');
 
+        /**
+         * Data to be put into the query.
+         * @type {{minInvest: number, id: *, userID: Number, currentInvest: number}}
+         */
         let data = {
             id: this.props.product.id,
             userID: this.props.userID,
@@ -30,9 +44,7 @@ class Product extends Component {
             currentInvest: parseFloat(this.refs.invest.value),
         };
 
-        console.log(data.minInvest);
-        console.log(data.currentInvest);
-
+        //Execute query
         const response = await fetch('/api/buyProduct', {
             method: 'POST',
             headers: {
@@ -43,9 +55,9 @@ class Product extends Component {
 
         const body = await response.text();
 
+        //Results
         window.location.reload();
 
-        console.log(body)
 
     };
 

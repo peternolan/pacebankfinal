@@ -3,8 +3,17 @@ import { withRouter } from 'react-router-dom';
 //import logo from './logo.svg';
 import './Login.css'
 
+
+
+/**
+ * Class of Login Page.
+ */
 class Login extends Component {
 
+    /**
+     * Constructor
+     * @param props
+     */
     constructor(props) {
         super(props);
 
@@ -13,21 +22,31 @@ class Login extends Component {
         }
     }
 
+    /**
+     * Sends the User to the CreateAcc page.
+     */
     newUser () {
         let path = `/create`;
         this.props.history.push(path);
     };
 
+    /**
+     * Logs the user in to the system.
+     * @param e
+     * @returns {Promise<void>}
+     */
     handleLogin = async e => {
 
         e.preventDefault();
 
+        //Data collected from log in page.
         let data = {
             username: this.refs.username.value,
             password: this.refs.psw.value
         };
 
 
+        //Executes Query
         const response = await fetch('/api/login', {
             method: 'POST',
             headers: {
@@ -37,8 +56,10 @@ class Login extends Component {
         }).then(response => response.json())
             .then(data => this.setState({userID: data}));
 
-        console.log(this.state.userID[0].custid);
 
+        /*
+        If a userID is returned from the query and set to state, we allow the user to enter the system.
+         */
         if (this.state.userID) {
             let path = `/store/${this.state.userID[0].custid}`;
             this.props.history.push({pathname: path, state: {loggedIn: true, userID: this.state.userID[0].custid}});

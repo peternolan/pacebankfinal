@@ -5,8 +5,15 @@ import PropTypes from "prop-types";
 import './Portfolio.css'
 
 
+/**
+ * Class of Portfolio item container.
+ */
 class Portfolio extends Component {
 
+    /**
+     * Constructor
+     * @param props
+     */
     constructor(props) {
         super(props);
 
@@ -18,25 +25,33 @@ class Portfolio extends Component {
     }
 
     static propTypes = {
-        product: PropTypes.object,
-        prodID: PropTypes.number,
-        userID: PropTypes.number
+        product: PropTypes.object, //Product information
+        prodID: PropTypes.number, //Product ID
+        userID: PropTypes.number //User/Portfolio ID
     };
+
 
     componentWillMount() {
         this.getBoughtProducts();
         this.getInvestment();
     }
 
+    /**
+     * Get information on the investment amount within the portfolio entry.
+     * @returns {Promise<void>}
+     */
     async getInvestment () {
+
+        //Data to enter into query
         let data = {
             id: this.props.userID,
             prodID: this.props.prodID
         };
 
-        console.log(this.props.userID);
-        console.log(this.props.prodID);
-
+        /**
+         * Get investment amount investment from query.
+         * @type {Response}
+         */
         const response = await fetch('/api/getInvestment', {
             method: 'POST',
             headers: {
@@ -45,14 +60,19 @@ class Portfolio extends Component {
             body: JSON.stringify(data),
         });
 
+        //Result of query
         const body = await response.text();
         let result = JSON.parse(body);
 
-        console.log(result);
-
+        //Set the state of the investment
         this.setState({investment: result[0].investment});
 
     }
+
+    /**
+     * Get the list of bought products from the portfolio.
+     * @returns {Promise<void>}
+     */
     async getBoughtProducts () {
 
         let data = {
