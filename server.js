@@ -238,12 +238,12 @@ app.post('/api/login', (req, res) => {
 
     var row = req.body;
 
-    pool.query(`SELECT username FROM customer WHERE username = '` + req.body.username + `'`, (err, results) => {
+    pool.query(`SELECT username FROM customer WHERE username = '` + SqlString.escape(req.body.username) + `'`, (err, results) => {
         if (err) {
             throw err
         }
         if (results.rows[0] !== undefined && results.rows[0].username === req.body.username) {
-            pool.query(`SELECT password FROM customer WHERE username = '` + req.body.username + `'`, (err, results) => {
+            pool.query(`SELECT password FROM customer WHERE username = '` + SqlString.escape(req.body.username) + `'`, (err, results) => {
                 if (err) {
                     throw err
                 }
@@ -252,7 +252,7 @@ app.post('/api/login', (req, res) => {
                 //var User = cookie.get('User', { signed: true });
                 //if (row.password === results.rows[0].password) {
 
-                    pool.query(`SELECT custid FROM customer WHERE username = '` + req.body.username + `'`, (err, results) => {
+                    pool.query(`SELECT custid FROM customer WHERE username = '` + SqlString.escape(req.body.username) + `'`, (err, results) => {
                         if (err) {
                             throw err
                         }

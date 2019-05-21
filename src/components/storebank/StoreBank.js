@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {withRouter} from "react-router";
 import Product from './Product';
 import Portfolio from "./Portfolio";
-//import { withRouter } from 'react-router-dom';
 import './StoreBank.css'
 
 /**
