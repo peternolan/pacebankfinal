@@ -12,6 +12,7 @@ class Product extends Component {
     };
 
 
+
     componentWillMount() {
         console.log(this.props.product);
     };
@@ -42,8 +43,6 @@ class Product extends Component {
         const body = await response.text();
 
         console.log(body)
-
-
 
     };
 

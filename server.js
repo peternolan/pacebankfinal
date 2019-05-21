@@ -16,7 +16,7 @@ let client = new pg.Client();
 
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: false}));
 
 
 let pool = new pg.Pool({
@@ -28,21 +28,6 @@ let pool = new pg.Pool({
     max: 10
 });
 
-pool.connect(function (err, client, done) {
-    if (err) {
-        return console.log(err);
-    }
-    else {
-        client.query('SELECT * FROM customer', (err, table) => {
-            if (err) {
-                return console.log(err);
-            }
-            else {
-                console.log(table.rows);
-            }
-        })
-    }
-});
 
 app.use(morgan('dev'));
 
@@ -71,16 +56,14 @@ app.post('/api/getPortfolio', (req, res) => {
     Will be passing in the id of the current user.
      */
 
-    console.log(req.body.id);
-    var queryAddCond = 'SELECT prodid FROM boughtprod ' +
+
+    var queryAddCond = 'SELECT * FROM boughtprod ' +
         'WHERE portid = ' + SqlString.escape(req.body.id);
 
     pool.query(queryAddCond, (err, results) => {
         if (err) {
             throw err
         }
-
-        console.log(results.rows);
 
         send(res, JSON.stringify(results.rows));
 
@@ -98,7 +81,7 @@ app.post('/api/getProducts', (req, res) => {
      */
 
     var queryGet = '';
-    console.log(req.body.portfolio.length);
+
     //console.log(req.body.portfolio.length);
 
     if (req.body.portfolio.length > 0) {
@@ -109,13 +92,12 @@ app.post('/api/getProducts', (req, res) => {
 
         for (var i = 1; i < req.body.portfolio.length ; i++) {
 
-            str = str + ", " + req.body.portfolio[i];
+            str = str + ", " + req.body.portfolio[i].prodid;
 
         }
 
-        console.log(str);
+        queryGet = 'SELECT * FROM product WHERE prodid NOT IN ( ' + str +' )';
 
-        queryGet = 'SELECT * FROM product WHERE prodid NOT IN ( ' + SqlString.escape(str) +' )';
     }
     else {
         queryGet = 'SELECT * FROM product'
@@ -131,16 +113,39 @@ app.post('/api/getProducts', (req, res) => {
 
     });
 
-
-
-
 });
 
+app.post('/api/getBoughtProducts', (req, res) => {
 
+    let queryGet = 'SELECT * FROM product WHERE prodid = ' + SqlString.escape(req.body.id);
+
+    pool.query(queryGet, (err, results) => {
+        if (err) {
+            throw err
+        }
+
+        send(res, JSON.stringify(results.rows));
+
+    });
+
+})
+
+app.post('/api/getInvestment', (req, res) => {
+
+    let queryGet = 'SELECT investment FROM boughtprod WHERE portid = ' + SqlString.escape(req.body.id);
+
+    pool.query(queryGet, (err, results) => {
+        if (err) {
+            throw err
+        }
+
+        send(res, JSON.stringify(results.rows));
+
+    });
+
+})
 
 app.post('/api/buyProduct', (req, res) => {
-
-    console.log('Buy Product');
 
     if (req.body.currentInvest >= req.body.minInvest) {
 
@@ -225,9 +230,6 @@ app.post('/api/addUser', (req, res) => {
 
 
 });
-
-
-
 
 
 app.post('/api/login', (req, res) => {

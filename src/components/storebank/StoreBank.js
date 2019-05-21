@@ -2,8 +2,10 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {withRouter} from "react-router";
 import Product from './Product';
+import Portfolio from "./Portfolio";
 //import { withRouter } from 'react-router-dom';
 import './StoreBank.css'
+
 
 class StoreBank extends Component {
 
@@ -48,12 +50,12 @@ class StoreBank extends Component {
 
         //[{"portid":851,"prodid":1,"investment":"$1,000.00","approve":true}]
 
-        console.log(body.length);
         console.log(JSON.parse(body));
 
         //for ()
 
         this.setState({portfolio: arr}, () => {
+            console.log(arr);
             this.getProducts();
         })
 
@@ -67,8 +69,6 @@ class StoreBank extends Component {
             portfolio: this.state.portfolio,
         };
 
-        console.log(this.state.portfolio);
-
         const response = await fetch('/api/getProducts', {
             method: 'POST',
             headers: {
@@ -79,15 +79,12 @@ class StoreBank extends Component {
 
         const body = await response.text();
         let result = JSON.parse(body);
-        console.log(result);
-        console.log(result.length);
 
         let arr = [];
 
         for (var i = 0; i < result.length; i++) {
 
             var obj = {id: result[i].prodid, name: result[i].name, minInvest: result[i].mininvest};
-            console.log(obj);
             arr.push(obj);
 
         }
@@ -106,9 +103,9 @@ class StoreBank extends Component {
         return (
 
             <div className="StoreBank">
-                <div id = "Portfolio">
-
-                    Hello
+                <div className={'PortfolioList'} id = "Portfolio">
+                    <h1>Your Portfolio</h1>
+                    {this.state.portfolio.map(product => <Portfolio key={ product.prodid} userID = {parseInt(this.props.match.params.userID)} prodID = {parseInt(product.prodid)} product = {product}/>)}
 
                 </div>
 
