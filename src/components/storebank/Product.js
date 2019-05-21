@@ -26,9 +26,12 @@ class Product extends Component {
         let data = {
             id: this.props.product.id,
             userID: this.props.userID,
-            minInvest: parseFloat(this.props.product.minInvest),
+            minInvest: parseFloat(this.props.product.minInvest.substr(1)),
             currentInvest: parseFloat(this.refs.invest.value),
         };
+
+        console.log(data.minInvest);
+        console.log(data.currentInvest);
 
         const response = await fetch('/api/buyProduct', {
             method: 'POST',

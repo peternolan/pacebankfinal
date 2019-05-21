@@ -82,8 +82,6 @@ app.post('/api/getProducts', (req, res) => {
 
     var queryGet = '';
 
-    //console.log(req.body.portfolio.length);
-
     if (req.body.portfolio.length > 0) {
 
         var str = '';
@@ -149,10 +147,8 @@ app.post('/api/getInvestment', (req, res) => {
 
 app.post('/api/buyProduct', (req, res) => {
 
-    if (req.body.currentInvest >= req.body.minInvest) {
 
-        console.log(req.body.currentInvest);
-        console.log(req.body.minInvest);
+    if (req.body.currentInvest >= req.body.minInvest) {
 
         var queryAddCond = 'INSERT INTO boughtprod '
             + '(approve, portid, prodid, investment) ' +
@@ -193,8 +189,6 @@ app.post('/api/addUser', (req, res) => {
 
     let hash = bcrypt.hashSync(rows.password, saltRounds).toString();
 
-    console.log(req.body.email);
-
     var queryAddCond = 'INSERT INTO customer '
         + '(custid, username, password, firstname, lastname, employed, salary, portfolioid, email) '
         + 'SELECT ' + SqlString.escape(id) + ', '
@@ -209,8 +203,6 @@ app.post('/api/addUser', (req, res) => {
         + ' WHERE NOT EXISTS ( SELECT custid FROM ' +
         'customer WHERE custid = ' + SqlString.escape(id) + ') ' +
         'RETURNING custid';
-
-    console.log(queryAddCond);
 
     pool.query(queryAddCond, [req.body.email], (err, results) => {
         if (err) {

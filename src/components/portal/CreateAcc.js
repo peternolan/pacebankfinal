@@ -44,6 +44,10 @@ class CreateAcc extends Component {
 
     };
 
+    handleCancel() {
+        let path = `/`;
+        this.props.history.push(path);
+    }
 
     render() {
         return (
@@ -76,6 +80,9 @@ class CreateAcc extends Component {
 
                             <button type="submit" className="loginButton" id="loginUser"
                                     onClick={this.handleNewUser.bind(this)}>Submit
+                            </button>
+                            <button className="cancelButton" id="cancelUser"
+                                    onClick={this.handleCancel.bind(this)}>Cancel
                             </button>
                         </nav>
                     </form>
