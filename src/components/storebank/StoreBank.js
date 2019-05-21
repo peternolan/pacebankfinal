@@ -11,6 +11,7 @@ class StoreBank extends Component {
 
     static propTypes = {
         userID: PropTypes.number,
+        loggedIn: false
     };
 
     constructor (props) {
@@ -103,18 +104,22 @@ class StoreBank extends Component {
         return (
 
             <div className="StoreBank">
-                <div className={'PortfolioList'} id = "Portfolio">
-                    <h1>Your Portfolio</h1>
-                    {this.state.portfolio.map(product => <Portfolio key={ product.prodid} userID = {parseInt(this.props.match.params.userID)} prodID = {parseInt(product.prodid)} product = {product}/>)}
+                {(!this.props.loggedIn) ?
+                    (<div> YOU MUST BE LOGGED IN TO USE OUR APPLICATION </div>) :
+                    (<div>
+                        <div className={'PortfolioList'} id = "Portfolio">
+                            <h1>Your Portfolio</h1>
+                            {this.state.portfolio.map(product => <Portfolio key={ product.prodid} userID = {parseInt(this.props.match.params.userID)} prodID = {parseInt(product.prodid)} product = {product}/>)}
+                        </div>
 
-                </div>
+                        <hr/>
 
-                <hr/>
-
-                <div className={'ProductList'} id = "ProductList">
-                    <h1>Products</h1>
-                    {this.state.products.map(product => <Product key={product.name} userID = {parseInt(this.props.match.params.userID)} product = {product}/>)}
-                </div>
+                        <div className={'ProductList'} id = "ProductList">
+                            <h1>Products</h1>
+                            {this.state.products.map(product => <Product key={product.name} userID = {parseInt(this.props.match.params.userID)} product = {product}/>)}
+                        </div>
+                    </div>
+                    )}
             </div>
 
         )
